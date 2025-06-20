@@ -15,7 +15,7 @@ This creates a brightness loop: **100% → 30% → 2% (when dark) → 100%** or 
 
 ### Condition script
 
-```json
+```lua
 {
   conditions = { {
       id = <SWITCH_ID>,

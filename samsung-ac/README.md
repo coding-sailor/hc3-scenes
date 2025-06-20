@@ -13,7 +13,7 @@ The scene performs the following actions:
 
 ### Condition script
 
-```json
+```lua
 {
   conditions = { {
       duration = 15,

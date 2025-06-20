@@ -43,7 +43,7 @@ This creates a brightness loop: **100% → 30% → 2% (when dark) → 100%** or 
 
 ### Main Scene (1-2-3 Click)
 **Condition script**
-```json
+```lua
   {
     conditions = { {
         id = <SWITCH_ID>,
@@ -75,7 +75,7 @@ This creates a brightness loop: **100% → 30% → 2% (when dark) → 100%** or 
 
 ### Hold Scene
 **Condition script**
-```json
+```lua
   {
     conditions = { {
         id = <SWITCH_ID>,
@@ -93,7 +93,7 @@ This creates a brightness loop: **100% → 30% → 2% (when dark) → 100%** or 
 
 ### Release Scene
 **Condition script**
-```json
+```lua
   {
     conditions = { {
         id = <SWITCH_ID>,
