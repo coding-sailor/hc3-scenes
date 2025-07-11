@@ -1,5 +1,13 @@
 # Samsung AC - Smart Air Conditioning Control
 
+## ⚠️ DEPRECATED
+
+**This scene is deprecated.** SmartThings Personal Access Tokens (PATs) created after December 30, 2024 are only valid for 24 hours. For continuous access, SmartThings recommends using OAuth2 authorization code flow instead.
+
+**Recommended solution:** Utilize the [Fibaro SmartThings AC QuickApp](https://github.com/coding-sailor/hc3-smartthings-qa) in combination with a block scene to implement this functionality.
+
+## Overview
+
 This scene automatically manages air conditioning power through SmartThings integration. It monitors door/window sensors and turns off the AC when doors or windows are left open for extended periods.
 
 ## Functionality
@@ -38,4 +46,4 @@ The scene performs the following actions:
   - `<SENSOR_ID>` - door/window sensor ID (e.g. `123`)
   - `<TOKEN>` - SmartThings [API token](https://account.smartthings.com/tokens) (e.g. `c5f72e3d-488a-442e-9b1a-8d7f5e5c4b3a`)
   - `<DEVICE_ID>` - Samsung AC device ID (e.g. `a1b2c3d4-e5f6-7890-abcd-ef1234567890`)
-  - `<SCENE_ID>`- Fibaro scene ID (e.g. `Scene165`)
+  - `<SCENE_ID>` - Fibaro scene ID (e.g. `Scene165`)
