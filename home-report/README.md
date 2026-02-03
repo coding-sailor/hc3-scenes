@@ -1,6 +1,10 @@
 # Home Report - Home Status Notification
 
-This scene generates comprehensive home status reports and sends them via Pushover notifications. It provides information about active lights and open doors/windows, helping you monitor your home's current state.
+This scene generates comprehensive home status reports and sends them via Pushover notifications using the [Pushover Quick App](https://github.com/coding-sailor/hc3-pushover-qa). It provides information about active lights and open doors/windows, helping you monitor your home's current state.
+
+## Requirements
+
+- [Pushover Quick App for HC3](https://github.com/coding-sailor/hc3-pushover-qa) - must be installed and configured on your Home Center 3
 
 ## Functionality
 
@@ -9,6 +13,7 @@ The scene creates a detailed report including:
 ### 💡 Active Lights
 - Scans all light devices in the home
 - Reports lights that are currently on (>0% brightness or boolean true)
+- Groups lights by room for better readability
 - Includes room name and device name for each active light
 - Shows "none" if no lights are active
 
@@ -31,14 +36,12 @@ No specific trigger condition - This scene can be triggered manually or by other
 ## Setup
 
 **Replace parameters in scene code**:
-   - `<TOKEN>` - Pushover [API token](https://pushover.net/api) (e.g. `azGD...`)
-   - `<DEFAULT_PUSHOVER_USER>` - Primary Pushover user key (used for automatic triggers or default user) (e.g. `uQiR...`)
-   - `<ALTERNATIVE_PUSHOVER_USER>` - Secondary Pushover user key (used when triggered by specific user) (e.g. `u7g...`)
+   - `<PUSHOVER_QA_ID>` - ID of the Pushover Quick App installed on your HC3 (e.g. `210`)
    - `<ALTERNATIVE_USER_ID>` - Fibaro user ID that triggers notification to alternative Pushover user (e.g. `10`)
-   - `<SENSOR_ID_1>`, `<SENSOR_ID_2>`, `...` - Your door/window sensor IDs  (e.g. `123`, `124`, `125`)
-   - `<PRIORITY_WARNING_SENSOR_ID>` - Main door sensor ID that displays with warning icon (⚠️) for visual distinction (e.g. `124`)
-   - `<SCENE_ID>` - Your actual scene ID (e.g. `Scene42`)
+   - `<ALTERNATIVE_QUICK_APP_USER_NAME>` - Name of the alternative user configured in Pushover Quick App (e.g. `"spouse"`)
+   - `<SENSOR_ID_1>`, `<SENSOR_ID_2>`, `...` - Your door/window sensor IDs (e.g. `123`, `124`, `125`)
+   - `<PRIORITY_WARNING_SENSOR_ID>` - Sensor ID that displays with warning icon (⚠️) for visual distinction (e.g. `124`)
 
-### Additional Pushover configuration
-- **Priority**: Low priority (-1)
-- **TTL**: 12 hours (43200 seconds)
+### Pushover notification options
+- `PUSHOVER_PRIORITY` - Low priority (`-1`)
+- `PUSHOVER_TTL` - 12 hours (`43200` seconds)

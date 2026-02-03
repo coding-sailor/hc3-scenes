@@ -1,47 +1,21 @@
 -- Configuration
-local pushoverToken = "<TOKEN>"
-local defaultPushoverUser = "<DEFAULT_PUSHOVER_USER>"
-local alternativePushoverUser = "<ALTERNATIVE_PUSHOVER_USER>"
-local alternativeUserId = <ALTERNATIVE_USER_ID>
-local sceneId = "<SCENE_ID>"
-local sensorIds = { <SENSOR_ID_1>, <SENSOR_ID_2>, ... }
-local priorityWarningId = <PRIORITY_WARNING_SENSOR_ID>
+local ALTERNATIVE_USER_ID = <ALTERNATIVE_USER_ID>
+local ALTERNATIVE_USER_NAME = "<ALTERNATIVE_QUICK_APP_USER_NAME>"
 
-function sendMessage(user, message)
-    local http = net.HTTPClient()
-    local request = {
-                    token   = pushoverToken,
-                    user    = user,
-                    priority   = "-1",
-                    ttl     = "43200",
-                    html    = 1,
-                    message = message
-                    }
+local SENSOR_IDS = { <SENSOR_ID_1>, <SENSOR_ID_2>, ... }
+local PRIORITY_WARNING_ID = <PRIORITY_WARNING_SENSOR_ID>
 
-    local data_str = {}
-    for k,v in pairs(request) do
-        table.insert(data_str, tostring(k) .. "=" .. tostring(v))
-    end
+local PUSHOVER_QUICK_APP_ID = <PUSHOVER_QA_ID>
+local PUSHOVER_PRIORITY = "-1"
+local PUSHOVER_TTL = "43200"
 
-    http:request("https://api.pushover.net/1/messages.json", {
-        options = {
-            method = "POST",
-            data = table.concat(data_str, "&")
-        },
-        success = function(response)
-            if response.status ~= 200 then
-                hub.error(sceneId, response.status, response.data)
-            end
-        end,
-        error = function(message)
-            hub.error(sceneId, message)
-        end
-    })
-end
+local TEXT_LIGHTS = "Lights"
+local TEXT_DOORS_WINDOWS = "Open doors/windows"
+local TEXT_NONE = "none"
 
-local user = defaultPushoverUser
-if sourceTrigger.id == alternativeUserId then
-    user = alternativePushoverUser
+local user = nil
+if sourceTrigger.id == ALTERNATIVE_USER_ID then
+    user = ALTERNATIVE_USER_NAME
 end
 
 local lightIds = hub.getDevicesID(
@@ -57,41 +31,58 @@ local lightIds = hub.getDevicesID(
   }
 );
 
-local report_data = {}
+local reportData = {}
 local notFound = true
-table.insert(report_data, "<b>Lights</b>")
+table.insert(reportData, "<b>" .. TEXT_LIGHTS .. "</b>")
+
+local lightsByRoom = {}
 for _, deviceId in ipairs(lightIds) do
     local deviceValue = hub.getValue(deviceId, "value")
     if (type(deviceValue) == "number" and deviceValue > 0)
     or (type(deviceValue) == "boolean" and deviceValue) then
         local roomName = hub.getRoomNameByDeviceID(deviceId)
         local deviceName = hub.getName(deviceId)
-        table.insert(report_data, "💡\t" .. roomName .. ": " .. deviceName)
+        if not lightsByRoom[roomName] then
+            lightsByRoom[roomName] = {}
+        end
+        table.insert(lightsByRoom[roomName], deviceName)
         notFound = false
     end
 end
 
+for roomName, devices in pairs(lightsByRoom) do
+    table.insert(reportData, "💡 " .. roomName .. ":")
+    for _, deviceName in ipairs(devices) do
+        table.insert(reportData, "- " .. deviceName)
+    end
+end
+
 if notFound then
-    table.insert(report_data, "none")
+    table.insert(reportData, TEXT_NONE)
 end
 
 notFound = true
-table.insert(report_data, "<b>Open doors/windows</b>")
-for i = 1, # sensorIds do
-    local deviceValue = hub.getValue(sensorIds[i], "value")
+table.insert(reportData, "<b>" .. TEXT_DOORS_WINDOWS .. "</b>")
+for i = 1, # SENSOR_IDS do
+    local deviceValue = hub.getValue(SENSOR_IDS[i], "value")
     if deviceValue then
-        local deviceName = hub.getName(sensorIds[i])
-        if sensorIds[i] == priorityWarningId then
-            table.insert(report_data, "⚠️\t" .. deviceName)
+        local deviceName = hub.getName(SENSOR_IDS[i])
+        if SENSOR_IDS[i] == PRIORITY_WARNING_ID then
+            table.insert(reportData, "⚠️ " .. deviceName)
         else
-            table.insert(report_data, "🪟\t" .. deviceName)
+            table.insert(reportData, "🪟 " .. deviceName)
         end
         notFound = false
     end
 end
 
 if notFound then
-    table.insert(report_data, "none")
+    table.insert(reportData, TEXT_NONE)
 end
 
-sendMessage(user, table.concat(report_data, "\n"))
+hub.call(PUSHOVER_QUICK_APP_ID, "send", table.concat(reportData, "\n"), {
+    user = user,
+    priority = PUSHOVER_PRIORITY,
+    ttl = PUSHOVER_TTL,
+    html = 1,
+})
